@@ -13,25 +13,23 @@ import java.util.List;
 public class ReservaController {
 
     private final ReservaService reservaService;
-    private final ReservaRepository reservaRepo;
 
-    public ReservaController(ReservaService reservaService, ReservaRepository reservaRepo) {
+    public ReservaController(ReservaService reservaService) {
         this.reservaService = reservaService;
-        this.reservaRepo = reservaRepo;
     }
 
     @GetMapping
     public List<Reserva> listar() {
-        return reservaRepo.findAll();
+        return reservaService.listar();
     }
 
     @PostMapping
-    public Reserva crear(@RequestBody ReservaDTO dto) {
+    public List<Reserva> crear(@RequestBody ReservaDTO dto) {
         return reservaService.crearReserva(dto);
     }
 
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
-        reservaRepo.deleteById(id);
+        reservaService.eliminar(id);
     }
 }

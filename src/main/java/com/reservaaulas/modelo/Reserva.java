@@ -36,4 +36,12 @@ public class Reserva {
     public Aula getAula() { return aula; }
     public void setAula(Aula aula) { this.aula = aula; }
     public LocalDate getFechaCreacion() { return fechaCreacion; }
+
+    public Horario getHorario() {
+        return horario;
+    }
+
+    public void setHorario(Horario horario) {
+        this.horario = horario;
+    }
 }

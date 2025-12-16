@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> manejarRuntime(RuntimeException ex) {
+    public ResponseEntity<String> manejar(RuntimeException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 }

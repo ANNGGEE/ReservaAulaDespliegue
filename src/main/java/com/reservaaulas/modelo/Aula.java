@@ -1,6 +1,8 @@
 package com.reservaaulas.modelo;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -9,14 +11,14 @@ public class Aula {
     @Id
     @GeneratedValue
     private Long id;
+
     private String nombre;
     private Integer capacidad;
     private Boolean esAulaDeOrdenadores;
     private Integer numeroOrdenadores;
 
-    // Relación con reservas
     @OneToMany(mappedBy = "aula", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reserva> reservas;
+    private List<Reserva> reservas = new ArrayList<>();
 
     // Getters y Setters
     public Long getId() { return id; }
