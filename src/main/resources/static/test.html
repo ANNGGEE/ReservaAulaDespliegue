@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prueba Frontend</title>
+</head>
+<body>
+<h1>Prueba de conexión con Backend</h1>
+<button id="btn">Obtener reservas</button>
+<pre id="output"></pre>
+
+<script>
+    document.getElementById('btn').addEventListener('click', () => {
+        fetch('https://TU-BACKEND-LIVE.onrender.com/reservas')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('output').textContent = 'Error: ' + error;
+            });
+    });
+</script>
+</body>
+</html>
