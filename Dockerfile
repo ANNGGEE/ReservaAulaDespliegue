@@ -1,26 +1,20 @@
-# Usamos una imagen oficial de Java 17
-FROM eclipse-temurin:17-jdk-alpine
+FROM maven:3.9.0-eclipse-temurin-17 AS build
 
-# Directorio dentro del contenedor
 WORKDIR /app
 
-# Copiar el pom.xml y el src (necesario para compilar)
-COPY pom.xml mvnw ./
-COPY .mvn .mvn
-COPY src src
+COPY pom.xml .
+RUN mvn dependency:go-offline
 
-# Copiar el wrapper de Maven
-COPY mvnw mvnw
-RUN chmod +x mvnw
+COPY src ./src
 
-# Construir el proyecto
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
-# Copiar el jar generado al contenedor
-RUN cp target/*.jar app.jar
+FROM eclipse-temurin:17-jdk-alpine
 
-# Puerto que va a exponer la app
-EXPOSE 8080
+WORKDIR /app
 
-# Comando para ejecutar la app
-ENTRYPOINT ["java","-jar","app.jar"]
+COPY --from=build /app/target/*.jar app.jar
+
+ENV PORT=10000
+
+ENTRYPOINT ["java","-jar","/app/app.jar"]
