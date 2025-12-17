@@ -1,13 +1,26 @@
-# Usa la imagen de Maven para compilar
-FROM maven:3.9.3-eclipse-temurin-17 AS build
-WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN mvn clean package -DskipTests
+# Usamos una imagen oficial de Java 17
+FROM eclipse-temurin:17-jdk-alpine
 
-# Usa la imagen de Java para ejecutar
-FROM eclipse-temurin:17-jre
+# Directorio dentro del contenedor
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+
+# Copiar el pom.xml y el src (necesario para compilar)
+COPY pom.xml mvnw ./
+COPY .mvn .mvn
+COPY src src
+
+# Copiar el wrapper de Maven
+COPY mvnw mvnw
+RUN chmod +x mvnw
+
+# Construir el proyecto
+RUN ./mvnw clean package -DskipTests
+
+# Copiar el jar generado al contenedor
+RUN cp target/*.jar app.jar
+
+# Puerto que va a exponer la app
 EXPOSE 8080
+
+# Comando para ejecutar la app
 ENTRYPOINT ["java","-jar","app.jar"]
