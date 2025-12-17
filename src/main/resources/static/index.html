@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reserva de Aulas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .reserva {
+            background: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Reservas</h1>
+<button onclick="cargarReservas()">Cargar reservas</button>
+
+<div id="resultado"></div>
+
+<script>
+    const BACKEND_URL = "https://reservaauladespliegue-3.onrender.com";
+
+    function cargarReservas() {
+        fetch(BACKEND_URL)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Error en la respuesta del servidor");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const contenedor = document.getElementById("resultado");
+                contenedor.innerHTML = "";
+
+                if (data.length === 0) {
+                    contenedor.innerHTML = "<p>No hay reservas</p>";
+                    return;
+                }
+
+                data.forEach(reserva => {
+                    const div = document.createElement("div");
+                    div.className = "reserva";
+                    div.innerHTML = `
+                        <strong>Fecha:</strong> ${reserva.fecha}<br>
+                        <strong>Motivo:</strong> ${reserva.motivo}<br>
+                        <strong>Asistentes:</strong> ${reserva.numeroAsistentes}
+                    `;
+                    contenedor.appendChild(div);
+                });
+            })
+            .catch(error => {
+                document.getElementById("resultado").innerHTML =
+                    "<p class='error'>Error al conectar con el backend</p>";
+                console.error(error);
+            });
+    }
+</script>
+
+</body>
+</html>
