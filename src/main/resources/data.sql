@@ -57,6 +57,20 @@ CREATE TABLE reserva (
 );
 
 -- --------------------------------------------------------
+-- DATOS INICIALES: USUARIOS
+-- --------------------------------------------------------
+INSERT INTO usuario (nombre, email, password, role) VALUES
+                                                        ('Juan Pérez', 'juan@mail.com', '1234', 'USER'),
+                                                        ('Ana López', 'ana@mail.com', '1234', 'USER');
+
+-- --------------------------------------------------------
+-- DATOS INICIALES: AULAS
+-- --------------------------------------------------------
+INSERT INTO aula (nombre, capacidad, es_aula_de_ordenadores, numero_ordenadores) VALUES
+                                                                                     ('Aula 101', 30, false, 0),
+                                                                                     ('Aula 102', 25, true, 10);
+
+-- --------------------------------------------------------
 -- DATOS INICIALES: TRAMOS HORARIOS
 -- --------------------------------------------------------
 INSERT INTO tramo_horario (dia_semana, sesion_dia, hora_inicio, hora_fin, tipo_tramo) VALUES
@@ -64,34 +78,12 @@ INSERT INTO tramo_horario (dia_semana, sesion_dia, hora_inicio, hora_fin, tipo_t
                                                                                           ('Lunes', 1, '09:25:00', '10:20:00', 'lectivo'),
                                                                                           ('Lunes', 2, '10:20:00', '10:35:00', 'recreo'),
                                                                                           ('Lunes', 3, '10:35:00', '11:30:00', 'lectivo'),
-                                                                                          ('Lunes', 4, '11:30:00', '12:25:00', 'lectivo'),
-                                                                                          ('Lunes', 5, '12:25:00', '12:40:00', 'recreo'),
-                                                                                          ('Lunes', 6, '12:40:00', '13:35:00', 'lectivo'),
-                                                                                          ('Lunes', 7, '13:35:00', '14:30:00', 'lectivo'),
-                                                                                          ('Lunes', 8, '14:30:00', '15:25:00', 'lectivo'),
-                                                                                          ('Lunes', 9, '15:25:00', '16:00:00', 'mediodia'),
-                                                                                          ('Lunes', 10, '16:00:00', '16:55:00', 'lectivo'),
-                                                                                          ('Lunes', 11, '16:55:00', '17:50:00', 'lectivo'),
-                                                                                          ('Lunes', 12, '17:50:00', '18:45:00', 'lectivo'),
-                                                                                          ('Lunes', 13, '18:45:00', '19:00:00', 'recreo'),
-                                                                                          ('Lunes', 14, '19:00:00', '19:55:00', 'lectivo'),
-                                                                                          ('Lunes', 15, '19:55:00', '20:50:00', 'lectivo'),
-                                                                                          ('Lunes', 16, '20:50:00', '21:45:00', 'lectivo'),
-
                                                                                           ('Martes', 0, '08:30:00', '09:25:00', 'lectivo'),
-                                                                                          ('Martes', 1, '09:25:00', '10:20:00', 'lectivo'),
-                                                                                          ('Martes', 2, '10:20:00', '10:35:00', 'recreo'),
-                                                                                          ('Martes', 3, '10:35:00', '11:30:00', 'lectivo'),
-                                                                                          ('Martes', 4, '11:30:00', '12:25:00', 'lectivo'),
-                                                                                          ('Martes', 5, '12:25:00', '12:40:00', 'recreo'),
-                                                                                          ('Martes', 6, '12:40:00', '13:35:00', 'lectivo'),
-                                                                                          ('Martes', 7, '13:35:00', '14:30:00', 'lectivo'),
-                                                                                          ('Martes', 8, '14:30:00', '15:25:00', 'lectivo'),
-                                                                                          ('Martes', 9, '15:25:00', '16:00:00', 'mediodia'),
-                                                                                          ('Martes', 10, '16:00:00', '16:55:00', 'lectivo'),
-                                                                                          ('Martes', 11, '16:55:00', '17:50:00', 'lectivo'),
-                                                                                          ('Martes', 12, '17:50:00', '18:45:00', 'lectivo'),
-                                                                                          ('Martes', 13, '18:45:00', '19:00:00', 'recreo'),
-                                                                                          ('Martes', 14, '19:00:00', '19:55:00', 'lectivo'),
-                                                                                          ('Martes', 15, '19:55:00', '20:50:00', 'lectivo'),
-                                                                                          ('Martes', 16, '20:50:00', '21:45:00', 'lectivo');
+                                                                                          ('Martes', 1, '09:25:00', '10:20:00', 'lectivo');
+
+-- --------------------------------------------------------
+-- DATOS INICIALES: RESERVAS
+-- --------------------------------------------------------
+INSERT INTO reserva (aula_id, usuario_id, fecha, motivo, numero_asistentes, tramo_horario_id) VALUES
+                                                                                                  (1, 1, '2025-12-18', 'Clase de Matemáticas', 25, 0),
+                                                                                                  (2, 2, '2025-12-18', 'Clase de Física', 20, 1);
