@@ -2,21 +2,43 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Reserva de Aulas</title>
+    <title>Gestión de Aulas y Reservas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #f5f5f5;
+            background: #ffe6f0;
             padding: 20px;
-        }
-        h1 {
             color: #333;
         }
-        .reserva {
+        h1, h2 {
+            color: #ff3399;
+        }
+        button {
+            background: #ff99cc;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #ff66aa;
+        }
+        .section {
+            display: none;
+            margin-top: 20px;
+        }
+        .item {
             background: white;
             padding: 10px;
             margin-bottom: 10px;
             border-radius: 5px;
+        }
+        input, select {
+            padding: 5px;
+            margin: 5px 0;
         }
         .error {
             color: red;
@@ -25,46 +47,153 @@
 </head>
 <body>
 
-<h1>Reservas</h1>
-<button onclick="cargarReservas()">Cargar reservas</button>
+<h1>Gestión de Aulas y Reservas</h1>
 
-<div id="resultado"></div>
+<div id="main-menu">
+    <button onclick="showSection('aulas-section')">Aulas</button>
+    <button onclick="showSection('reservas-section')">Reservas</button>
+</div>
+
+<!-- Aulas Section -->
+<div id="aulas-section" class="section">
+    <h2>Aulas</h2>
+    <button onclick="showAulasCreateForm()">Crear Aula</button>
+    <button onclick="listarAulas()">Listar Aulas</button>
+    <button onclick="showSection('main-menu')">Volver al menú</button>
+
+    <div id="aulas-form" style="margin-top:10px;"></div>
+    <div id="aulas-list"></div>
+</div>
+
+<!-- Reservas Section -->
+<div id="reservas-section" class="section">
+    <h2>Reservas</h2>
+    <button onclick="showReservasCreateForm()">Crear Reserva</button>
+    <button onclick="listarReservas()">Listar Reservas</button>
+    <button onclick="showSection('main-menu')">Volver al menú</button>
+
+    <div id="reservas-form" style="margin-top:10px;"></div>
+    <div id="reservas-list"></div>
+</div>
 
 <script>
     const BACKEND_URL = "https://reservaauladespliegue-3.onrender.com";
 
-    function cargarReservas() {
-        fetch(BACKEND_URL)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Error en la respuesta del servidor");
-                }
-                return response.json();
-            })
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+        document.getElementById('main-menu').style.display = id === 'main-menu' ? 'block' : 'none';
+        const section = document.getElementById(id);
+        if(section) section.style.display = 'block';
+    }
+
+    // ---------- AULAS ----------
+    function listarAulas() {
+        fetch(`${BACKEND_URL}/aulas`)
+            .then(r => r.json())
             .then(data => {
-                const contenedor = document.getElementById("resultado");
+                const contenedor = document.getElementById("aulas-list");
                 contenedor.innerHTML = "";
-
-                if (data.length === 0) {
-                    contenedor.innerHTML = "<p>No hay reservas</p>";
-                    return;
-                }
-
-                data.forEach(reserva => {
+                data.forEach(aula => {
                     const div = document.createElement("div");
-                    div.className = "reserva";
+                    div.className = "item";
                     div.innerHTML = `
-                        <strong>Fecha:</strong> ${reserva.fecha}<br>
-                        <strong>Motivo:</strong> ${reserva.motivo}<br>
-                        <strong>Asistentes:</strong> ${reserva.numeroAsistentes}
+                        <strong>Nombre:</strong> ${aula.nombre}<br>
+                        <strong>Capacidad:</strong> ${aula.capacidad}<br>
+                        <button onclick="eliminarAula(${aula.id})">Eliminar</button>
                     `;
                     contenedor.appendChild(div);
                 });
-            })
-            .catch(error => {
-                document.getElementById("resultado").innerHTML =
-                    "<p class='error'>Error al conectar con el backend</p>";
-                console.error(error);
+            });
+    }
+
+    function showAulasCreateForm() {
+        const contenedor = document.getElementById("aulas-form");
+        contenedor.innerHTML = `
+            <h3>Crear Aula</h3>
+            <input type="text" id="aula-nombre" placeholder="Nombre">
+            <input type="number" id="aula-capacidad" placeholder="Capacidad">
+            <button onclick="crearAula()">Guardar Aula</button>
+        `;
+    }
+
+    function crearAula() {
+        const nombre = document.getElementById("aula-nombre").value;
+        const capacidad = document.getElementById("aula-capacidad").value;
+
+        fetch(`${BACKEND_URL}/aulas`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({nombre, capacidad})
+        }).then(r => {
+            if(r.ok) {
+                alert("Aula creada!");
+                listarAulas();
+            } else alert("Error creando aula");
+        });
+    }
+
+    function eliminarAula(id) {
+        fetch(`${BACKEND_URL}/aulas/${id}`, {method:'DELETE'})
+            .then(r => {
+                if(r.ok) listarAulas();
+                else alert("Error al eliminar");
+            });
+    }
+
+    // ---------- RESERVAS ----------
+    function listarReservas() {
+        fetch(`${BACKEND_URL}/reservas`)
+            .then(r => r.json())
+            .then(data => {
+                const contenedor = document.getElementById("reservas-list");
+                contenedor.innerHTML = "";
+                data.forEach(reserva => {
+                    const div = document.createElement("div");
+                    div.className = "item";
+                    div.innerHTML = `
+                        <strong>Fecha:</strong> ${reserva.fecha}<br>
+                        <strong>Motivo:</strong> ${reserva.motivo}<br>
+                        <strong>Asistentes:</strong> ${reserva.numeroAsistentes}<br>
+                        <button onclick="eliminarReserva(${reserva.id})">Eliminar</button>
+                    `;
+                    contenedor.appendChild(div);
+                });
+            });
+    }
+
+    function showReservasCreateForm() {
+        const contenedor = document.getElementById("reservas-form");
+        contenedor.innerHTML = `
+            <h3>Crear Reserva</h3>
+            <input type="date" id="reserva-fecha" placeholder="Fecha">
+            <input type="text" id="reserva-motivo" placeholder="Motivo">
+            <input type="number" id="reserva-asistentes" placeholder="Número de Asistentes">
+            <button onclick="crearReserva()">Guardar Reserva</button>
+        `;
+    }
+
+    function crearReserva() {
+        const fecha = document.getElementById("reserva-fecha").value;
+        const motivo = document.getElementById("reserva-motivo").value;
+        const numeroAsistentes = document.getElementById("reserva-asistentes").value;
+
+        fetch(`${BACKEND_URL}/reservas`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({fecha, motivo, numeroAsistentes})
+        }).then(r => {
+            if(r.ok) {
+                alert("Reserva creada!");
+                listarReservas();
+            } else alert("Error creando reserva");
+        });
+    }
+
+    function eliminarReserva(id) {
+        fetch(`${BACKEND_URL}/reservas/${id}`, {method:'DELETE'})
+            .then(r => {
+                if(r.ok) listarReservas();
+                else alert("Error al eliminar");
             });
     }
 </script>
